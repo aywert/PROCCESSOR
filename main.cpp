@@ -1,8 +1,8 @@
-#include"../STACK/ASSERT.h"
-#include"../STACK/stack_functions.h"
-#include"string.h"
+#include"STACK/ASSERT.h"
+#include"STACK/stack_functions.h"
+#include"assembler.h"
 
-int run_proccessor(FILE* name);
+int run_proccessor(int* instructions);
 
 enum cycle_status
 {
@@ -10,105 +10,104 @@ enum cycle_status
     STOP = 0,
 };
 
-enum op_comands
+int main(int argc, char *argv[])
 {
-    CMD_PUSH     =  1,
-    CMD_OUTPUT   =  2,
-    CMD_OUTPUT   =  3,
-    CMD_HAULT    =  4,
-};
+    if(argc < 2)
+        return STOP;
+    
+    FILE* file = fopen(argv[argc-1], "r");
+    int* instructions = assembler(file);
 
-enum math_comands
-{
-    CMD_ADD      = 11,
-    CMD_SUBTRACT = 12,
-    CMD_DIVIDE   = 13,
-    CMD_MULTIPLY = 14,
-    CMD_SIN      = 15,
-    CMD_COS      = 16,
-    CMD_SQRT     = 17,
-};
+    /*for (int i = 0; i <= 12; i++)
+    {
+        if (instructions[i] == CMD_PUSH)
+            printf("%d ", instructions[i]);
+        else
+            printf("%d\n", instructions[i]);
+    }
+    printf("___________________\n");*/
 
-int main()
-{
-    FILE* name = fopen("code_instruct.txt", "r");
-    run_proccessor(name);
+    run_proccessor(instructions); return 0; 
+    
 }
 
-int run_proccessor(FILE* name)
+int run_proccessor(int* instructions)
 {
     my_stack stk = {};
     MY_STACK_CTOR(&stk, 10);
-    int run = DO;
+    cycle_status run = DO;
+
+    int ip = 0; 
     while(run)
     {
-        /*static int i = 0;
-        i++;
-        printf("times in cycle = %d\n", i);*/
-        char cmd[50] = "";
-        fscanf(name, "%s", cmd);
-        if (strcmp(cmd, "push") == 0)
+        if (instructions[ip] == CMD_PUSH)
         {
-            int arg = 0;
-            fscanf(name, "%d", &arg);
-            MY_STACK_PUSH(&stk, arg);
+            MY_STACK_PUSH(&stk, instructions[++ip]);
+            ip++;
             continue;
         }
 
-        if (strcmp(cmd, "add") == 0)
+        if (instructions[ip] == CMD_ADD)
         {
             stack_elem_t x_1 = 0;
             stack_elem_t x_2 = 0;
             MY_STACK_POP(&stk, &x_1);
             MY_STACK_POP(&stk, &x_2);
             MY_STACK_PUSH(&stk, x_1 + x_2);
+            ip++;
             continue;
         }
 
-        if (strcmp(cmd, "sub") == 0)
+        if (instructions[ip] == CMD_SUBTRACT)
         {
             stack_elem_t x_1 = 0;
             stack_elem_t x_2 = 0;
             MY_STACK_POP(&stk, &x_1);
             MY_STACK_POP(&stk, &x_2);
             MY_STACK_PUSH(&stk, x_2 - x_1);
+            ip++;
             continue;
         }
 
-        if (strcmp(cmd, "div") == 0)
+        if (instructions[ip] == CMD_DIVIDE)
         {
             stack_elem_t x_1 = 0;
             stack_elem_t x_2 = 0;
             MY_STACK_POP(&stk, &x_1);
             MY_STACK_POP(&stk, &x_2);
             MY_STACK_PUSH(&stk, x_2 / x_1);
+            ip++;
             continue;
         }
 
-        if (strcmp(cmd, "mul") == 0)
+        if (instructions[ip] == CMD_MULTIPLY)
         {
             stack_elem_t x_1 = 0;
             stack_elem_t x_2 = 0;
             MY_STACK_POP(&stk, &x_1);
             MY_STACK_POP(&stk, &x_2);
             MY_STACK_PUSH(&stk, x_2 * x_1);
+            ip++;
             continue;
         }
 
-        if (strcmp(cmd, "out") == 0)
+        if (instructions[ip] == CMD_OUTPUT)
         {
             stack_elem_t output = 0;
             MY_STACK_POP(&stk, &output);
             printf(YELLOW("Answer is %lg\n"), output); 
+            ip++;
             continue;       
         }
 
-        if (strcmp(cmd, "hlt") == 0)
+        if (instructions[ip] == CMD_HAULT)
         {
             printf(GREEN("PROGRAMM COMPLETED\n"));
             run = STOP;
         }
 
-        else{printf(RED("SNTXERR: %s"), cmd); run = STOP;}
+        else{printf(RED("SNTXERR: %d"), instructions[ip]); run = STOP;}
     }
+    return 0;
 }
+
