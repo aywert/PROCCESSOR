@@ -1,6 +1,6 @@
 #include"assembler.h"
 
-int* assembler(FILE* input_file)  //, const char* name) // для считывадьчика инфы
+int* assembler(FILE* input_file, FILE* output_file)  //, const char* name) // для считывадьчика инфы
 {
     //Рабочий считывальщик инфы из файла по байтого
     /*struct stat text_data = {};
@@ -52,6 +52,31 @@ int* assembler(FILE* input_file)  //, const char* name) // для считыва
             continue;
         }
 
+        
+        if (strcmp(cmd, "sin") == 0)
+        {
+            pc++; instructions[pc] = CMD_SIN;
+            continue;
+        }
+        
+        if (strcmp(cmd, "cos") == 0)
+        {
+            pc++; instructions[pc] = CMD_COS;
+            continue;
+        }
+        
+        if (strcmp(cmd, "sqrt") == 0)
+        {
+            pc++; instructions[pc] = CMD_SQRT;
+            continue;
+        }
+
+        if (strcmp(cmd, "in") == 0)
+        {
+            pc++; instructions[pc] = CMD_INPUT;
+            continue;
+        }
+
         if (strcmp(cmd, "out") == 0)
         {
             pc++; instructions[pc] = CMD_OUTPUT;
@@ -68,14 +93,12 @@ int* assembler(FILE* input_file)  //, const char* name) // для считыва
     
     }while (strcmp(cmd, "hlt") != 0);
 
-    /*for (int i = 0; i <= pc; i++)
+    for (int i = 0; i <= pc; i++)
     {
         if (instructions[i] == CMD_PUSH)
-            printf("%d ", instructions[i]);
+            fprintf(output_file, "%d ", instructions[i]);
         else
-            printf("%d\n", instructions[i]);
+            fprintf(output_file, "%d\n", instructions[i]);
     }
-    printf("_________________________\n");*/
-
     return instructions; 
 }

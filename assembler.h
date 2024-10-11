@@ -1,4 +1,6 @@
-#include<stdlib.h>
+#ifndef ASSEMBLER
+#define ASSEMBLER
+
 #include<sys/stat.h>
 #include"string.h"
 #include"..\STACK\stack_functions.h"
@@ -23,4 +25,6 @@ enum math_comands
 };
 
 const int instruct_size = 100;
-int* assembler(FILE* file);
+int* assembler(FILE* input_file, FILE* output_file);
+
+#endif

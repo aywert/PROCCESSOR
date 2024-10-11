@@ -1,9 +1,12 @@
 push 30
-push 70
+sin
+push 60
+cos
 add
 push 80
 push 60
 sub
 mul
+sqrt
 out
 hlt
