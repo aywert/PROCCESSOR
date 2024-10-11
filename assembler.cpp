@@ -1,6 +1,6 @@
 #include"assembler.h"
 
-int* assembler(FILE* file)  //, const char* name) // для считывадьчика инфы
+int* assembler(FILE* input_file)  //, const char* name) // для считывадьчика инфы
 {
     //Рабочий считывальщик инфы из файла по байтого
     /*struct stat text_data = {};
@@ -18,11 +18,11 @@ int* assembler(FILE* file)  //, const char* name) // для считывадьч
     char cmd[50] = ""; 
     do 
     {
-        fscanf(file, "%s", &cmd);
+        fscanf(input_file, "%s", cmd);
         if (strcmp(cmd, "push") == 0)
         {
             int arg = 0;
-            fscanf(file, "%d", &arg);
+            fscanf(input_file, "%d", &arg);
             pc++; instructions[pc] = CMD_PUSH;
             pc++; instructions[pc] = arg;
             continue;

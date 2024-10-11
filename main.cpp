@@ -37,77 +37,62 @@ int run_proccessor(int* instructions)
     MY_STACK_CTOR(&stk, 10);
     cycle_status run = DO;
 
-    int ip = 0; 
-    while(run)
+    int ip = 0;
+     
+    while(run){
+
+    stack_elem_t x_1 = 0;
+    stack_elem_t x_2 = 0;
+    stack_elem_t output = 0;
+
+    switch(instructions[ip])
     {
-        if (instructions[ip] == CMD_PUSH)
-        {
-            MY_STACK_PUSH(&stk, instructions[++ip]);
-            ip++;
-            continue;
-        }
+    case CMD_PUSH:
+        MY_STACK_PUSH(&stk, instructions[++ip]);
+        break;
 
-        if (instructions[ip] == CMD_ADD)
-        {
-            stack_elem_t x_1 = 0;
-            stack_elem_t x_2 = 0;
-            MY_STACK_POP(&stk, &x_1);
-            MY_STACK_POP(&stk, &x_2);
-            MY_STACK_PUSH(&stk, x_1 + x_2);
-            ip++;
-            continue;
-        }
+    case CMD_ADD:
+        MY_STACK_POP(&stk, &x_1);
+        MY_STACK_POP(&stk, &x_2);
+        MY_STACK_PUSH(&stk, x_1 + x_2);
+        break;
 
-        if (instructions[ip] == CMD_SUBTRACT)
-        {
-            stack_elem_t x_1 = 0;
-            stack_elem_t x_2 = 0;
-            MY_STACK_POP(&stk, &x_1);
-            MY_STACK_POP(&stk, &x_2);
-            MY_STACK_PUSH(&stk, x_2 - x_1);
-            ip++;
-            continue;
-        }
+    case CMD_SUBTRACT:
+        MY_STACK_POP(&stk, &x_1);
+        MY_STACK_POP(&stk, &x_2);
+        MY_STACK_PUSH(&stk, x_2 - x_1);
+        break;
 
-        if (instructions[ip] == CMD_DIVIDE)
-        {
-            stack_elem_t x_1 = 0;
-            stack_elem_t x_2 = 0;
-            MY_STACK_POP(&stk, &x_1);
-            MY_STACK_POP(&stk, &x_2);
-            MY_STACK_PUSH(&stk, x_2 / x_1);
-            ip++;
-            continue;
-        }
+    case CMD_DIVIDE:
+        MY_STACK_POP(&stk, &x_1);
+        MY_STACK_POP(&stk, &x_2);
+        MY_STACK_PUSH(&stk, x_2 / x_1);
+        break;
 
-        if (instructions[ip] == CMD_MULTIPLY)
-        {
-            stack_elem_t x_1 = 0;
-            stack_elem_t x_2 = 0;
-            MY_STACK_POP(&stk, &x_1);
-            MY_STACK_POP(&stk, &x_2);
-            MY_STACK_PUSH(&stk, x_2 * x_1);
-            ip++;
-            continue;
-        }
+    case CMD_MULTIPLY:
+        MY_STACK_POP(&stk, &x_1);
+        MY_STACK_POP(&stk, &x_2);
+        MY_STACK_PUSH(&stk, x_2 * x_1);
+        break;
+    
+    case CMD_OUTPUT:
+        MY_STACK_POP(&stk, &output);
+        printf(YELLOW("Answer is %lg\n"), output); 
+        break;
 
-        if (instructions[ip] == CMD_OUTPUT)
-        {
-            stack_elem_t output = 0;
-            MY_STACK_POP(&stk, &output);
-            printf(YELLOW("Answer is %lg\n"), output); 
-            ip++;
-            continue;       
-        }
-
-        if (instructions[ip] == CMD_HAULT)
-        {
-            printf(GREEN("PROGRAMM COMPLETED\n"));
-            run = STOP;
-        }
-
-        else{printf(RED("SNTXERR: %d"), instructions[ip]); run = STOP;}
+    case CMD_HAULT:
+        printf(GREEN("PROGRAMM COMPLETED\n"));
+        run = STOP;
+        break;
+    
+    default:
+        printf(RED("SNTXERR: %d"), instructions[ip]); run = STOP;
+        break;
     }
-    return 0;
+
+    ip++;}
+
+return 0;
+
 }
 
