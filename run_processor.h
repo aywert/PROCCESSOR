@@ -1,10 +1,20 @@
 #ifndef PROCCESSOR
 #define PROCCESSOR
 
+const int n_registers = 8;
+
 enum cycle_status
 {
     DO   = 1,
     STOP = 0,
+};
+
+struct SPU
+{
+    int* instructions;
+    int ip;
+    struct my_stack* stk;
+    int* registers;
 };
 
 #include"STACK\stack_functions.h"

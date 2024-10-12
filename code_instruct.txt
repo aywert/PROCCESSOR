@@ -1,12 +1,5 @@
-push 30
-sin
-push 60
-cos
-add
-push 80
-push 60
-sub
-mul
-sqrt
+push 3565
 out
+jmp 0
 hlt
+
