@@ -30,6 +30,56 @@ int* assembler(FILE* input_file, FILE* output_file)  //, const char* name) // д
             continue;
         }
 
+        if (strcmp(cmd, "pushr") == 0)
+        {
+            char arg[5] = {};
+            fscanf(input_file, "%s", &arg);
+            instructions[pc++] = CMD_PUSHR; 
+            
+            if (strcmp(arg, "AX") == 0)
+            {
+                instructions[pc++] = 0;
+                continue;
+            }
+
+            if (strcmp(arg, "BX") == 0)
+            {
+                instructions[pc++] = 1;
+                continue;
+            }
+
+            if (strcmp(arg, "CX") == 0)
+            {
+                instructions[pc++] = 2;
+                continue;
+            }
+
+            if (strcmp(arg, "DX") == 0)
+            {
+                instructions[pc++] = 3;
+                continue;
+            }
+
+            if (strcmp(arg, "EX") == 0)
+            {
+                instructions[pc++] = 4;
+                continue;
+            }
+
+            if (strcmp(arg, "FX") == 0)
+            {
+                instructions[pc++] = 5;
+                continue;
+            }
+
+            if (strcmp(arg, "GX") == 0)
+            {
+                instructions[pc++] = 6;
+                continue;
+            }
+            continue;
+        }
+
         if (strcmp(cmd, "add") == 0)
         {
             instructions[pc] = CMD_ADD; pc++; 
@@ -69,6 +119,57 @@ int* assembler(FILE* input_file, FILE* output_file)  //, const char* name) // д
         if (strcmp(cmd, "sqrt") == 0)
         {
             instructions[pc] = CMD_SQRT; pc++; 
+            continue;
+        }
+
+        if (strcmp(cmd, "pop") == 0)
+        {
+            instructions[pc++] = CMD_POP;
+
+            char arg[5] = {};
+            fscanf(input_file, "%s", &arg);
+            
+            if (strcmp(arg, "AX") == 0)
+            {
+                instructions[pc++] = 0;
+                continue;
+            }
+
+            if (strcmp(arg, "BX") == 0)
+            {
+                instructions[pc++] = 1;
+                continue;
+            }
+
+            if (strcmp(arg, "CX") == 0)
+            {
+                instructions[pc++] = 2;
+                continue;
+            }
+
+            if (strcmp(arg, "DX") == 0)
+            {
+                instructions[pc++] = 3;
+                continue;
+            }
+
+            if (strcmp(arg, "EX") == 0)
+            {
+                instructions[pc++] = 4;
+                continue;
+            }
+
+            if (strcmp(arg, "FX") == 0)
+            {
+                instructions[pc++] = 5;
+                continue;
+            }
+
+            if (strcmp(arg, "GX") == 0)
+            {
+                instructions[pc++] = 6;
+                continue;
+            }
             continue;
         }
 
@@ -170,42 +271,52 @@ int* assembler(FILE* input_file, FILE* output_file)  //, const char* name) // д
                 i++;
             break;
 
-        case CMD_JA:
+          case CMD_PUSHR:
+            fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
+                i++;
+            break;
+
+          case CMD_JA:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
         
-        case CMD_JAE:
+          case CMD_JAE:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
         
-        case CMD_JB:
+          case CMD_JB:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
 
-        case CMD_JBE:
+          case CMD_JBE:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
 
-        case CMD_JE:
+          case CMD_JE:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
 
-        case CMD_JNE:
+          case CMD_JNE:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
 
-        case CMD_JMP:
+          case CMD_JMP:
             fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
                 i++;
             break;
 
-        default:
+          case CMD_POP:
+            fprintf(output_file, "%d %d\n", instructions[i],  instructions[i+1]);
+                i++;
+            break;
+
+          default:
             fprintf(output_file, "%d\n", instructions[i]);
             break;
         }

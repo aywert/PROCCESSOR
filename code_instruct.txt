@@ -1,5 +1,15 @@
-push 3565
+push 1
+pop AX
+pushr AX
+pushr AX
+mul
 out
-jmp 0
+pushr AX
+push 1
+add
+pop AX
+pushr AX
+push 10
+jbe 4
 hlt
 

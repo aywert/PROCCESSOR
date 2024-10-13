@@ -2,6 +2,7 @@
 #define PROCCESSOR
 
 const int n_registers = 8;
+const int last_register = -1;
 
 enum cycle_status
 {
@@ -14,7 +15,7 @@ struct SPU
     int* instructions;
     int ip;
     struct my_stack* stk;
-    int* registers;
+    double* registers;
 };
 
 #include"STACK\stack_functions.h"

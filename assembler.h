@@ -7,10 +7,12 @@
 
 enum op_comands
 {
-    CMD_PUSH     = 1,
-    CMD_INPUT    = 2,
-    CMD_OUTPUT   = 3,
-    CMD_HAULT    = 4,
+    CMD_PUSH   = 1,
+    CMD_INPUT  = 2,
+    CMD_OUTPUT = 3,
+    CMD_HAULT  = -1,
+    CMD_POP    = 4,
+    CMD_PUSHR  = 5,
 };
 
 enum math_comands
