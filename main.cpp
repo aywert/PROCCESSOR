@@ -5,12 +5,6 @@ int main(int argc, char *argv[])
 {
     if(argc < 3)
         return STOP;
-    
-    FILE* input_file  = fopen(argv[argc-2], "r");
-    FILE* output_file = fopen(argv[argc-1], "w+");
-
-    int* instructions = assembler(input_file, output_file);
-
     /*for (int i = 0; i <= 12; i++)
     {
         if (instructions[i] == CMD_PUSH)
@@ -19,9 +13,13 @@ int main(int argc, char *argv[])
             printf("%d\n", instructions[i]);
     }
     printf("___________________\n");*/
+    struct SPU processor = {};
+    struct my_stack stk  = {};
 
-    run_processor(instructions); 
-    free(instructions); instructions = NULL;
+    processor_init(&processor, &stk, argc, argv);
+
+    run_processor(&processor); 
+    
     return 0;
 }
 

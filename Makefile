@@ -9,10 +9,10 @@ OBJFILES := main.o STACK\stack_functions.o STACK\ASSERT.o assembler.o run_proces
 all: $(NAMEEXE)
 
 run: $(NAMEEXE)
-	.\$(NAMEEXE) code_instruct.txt code_instruct.asm
+	.\$(NAMEEXE) code_instruct.txt code_instruct.asm 
 
 $(NAMEEXE) : $(OBJFILES)
-	g++ $(OBJFILES) -o $@ $(LFLAGS)
+	@g++ $(OBJFILES) -o $@ $(LFLAGS)
 
 %.o : %.cpp
-	g++ $< -c -o $@ $(CFLAGS)
+	@g++ $< -c -o $@ $(CFLAGS)

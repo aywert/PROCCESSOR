@@ -39,7 +39,7 @@ enum go_to
 
 
 
-const int instruct_size = 100;
-int* assembler(FILE* input_file, FILE* output_file);
+const int instruct_size = 30;
+int assembler(struct SPU* processor);
 
 #endif
