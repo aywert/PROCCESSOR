@@ -1,5 +1,4 @@
-#include"assembler.h"
-#include"run_processor.h"
+#include"processor.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +17,9 @@ int main(int argc, char *argv[])
 
     processor_init(&processor, &stk, argc, argv);
 
-    run_processor(&processor); 
+    run_processor(&processor);
+
+    processor_dtor(&processor); 
     
     return 0;
 }

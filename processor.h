@@ -21,6 +21,12 @@ struct massive
     int size;
 };
 
+struct label
+{
+    int pc;
+    char label[];
+};
+
 struct SPU
 {
     char* name_file;
@@ -32,9 +38,15 @@ struct SPU
     double* registers;
 };
 
+int free_label(label* table_labels);
+int is_label(char* cmd);
+int find_label(label* table_labels, char* label);
+label* labels_init(void);
+int labels_dtor(label* processor_labels);
+
 int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *argv[]);
 int run_processor(struct SPU* processor);
-
+int processor_dtor(struct SPU* processor);
 
 
 #endif

@@ -1,5 +1,6 @@
 push 1
 pop AX
+xui:
 pushr AX
 pushr AX
 mul
@@ -10,6 +11,5 @@ add
 pop AX
 pushr AX
 push 10
-jbe 4
+JBE xui
 hlt
-

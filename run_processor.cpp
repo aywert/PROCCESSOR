@@ -1,10 +1,10 @@
-#include"run_processor.h"
-
+#include"processor.h"
+//#define PROCESSOR_DEBUG
 int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *argv[])
 {
   processor->name_file   = argv[argc-2];
   processor->input_file  = fopen(argv[argc-2], "r");
-  processor->output_file = fopen(argv[argc-1], "w+");
+  processor->output_file = fopen(argv[argc-1], "w");
 
   assembler(processor);
 
@@ -15,6 +15,7 @@ int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *
 
   processor->stk = stk;
   processor->registers = registers;
+  return 0;
 }
 
 int run_processor(struct SPU* processor)
@@ -22,15 +23,16 @@ int run_processor(struct SPU* processor)
   cycle_status run = DO;
   while(run){
   ///////////////////////////////////////////////////////////////////////////////////////
+    #ifdef PROCESSOR_DEBUG
     for (int i = 0; i < processor->instructions.size; i++)
     {
-      printf("%4X", i);
+      printf(BLUE("%4X"), i);
     }
     printf("\n");
 
     for (int i = 0; i < processor->instructions.size; i++)
     {
-      printf("%4X", processor->instructions.script[i]);
+      printf(MAGENTA("%4X"), processor->instructions.script[i]);
     }
     printf("\n");
 
@@ -42,6 +44,7 @@ int run_processor(struct SPU* processor)
 
     getchar();
     printf("\n\n");
+    #endif
 //////////////////////////////////////////////////////////////////////////////////////////
     stack_elem_t x_1 = 0;
     stack_elem_t x_2 = 0;
@@ -197,7 +200,7 @@ int run_processor(struct SPU* processor)
         break;
     //////////////////////////////
       case CMD_HAULT:
-        printf(GREEN("PROGRAMM COMPLETED\n"));
+        printf(GREEN("Processor completed the emplementation of the programm\n"));
         run = STOP;
         break;
     
@@ -211,7 +214,12 @@ int run_processor(struct SPU* processor)
   }
 
   return 0;
+}
 
+int processor_dtor(struct SPU* processor)
+{
   MY_STACK_DTOR(processor->stk);
+  free(processor->registers); processor->registers = NULL;
   free(processor->instructions.script); processor->instructions.script = NULL;
+  return 0;
 }
