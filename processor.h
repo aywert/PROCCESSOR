@@ -32,6 +32,7 @@ struct SPU
     char* name_file;
     FILE* input_file;
     FILE* output_file;
+    FILE* output_bin;
     struct massive instructions;
     int ip;
     struct my_stack* stk;

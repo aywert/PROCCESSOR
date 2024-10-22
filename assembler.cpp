@@ -1,6 +1,6 @@
 #include"processor.h"
 
-int assembler(struct SPU* processor)  //, const char* name) // для считывальчика инфы
+int assembler(struct SPU* processor) 
 {
     // printf("=========================================\n");
     // printf("processor->name_file = %p\n", processor->name_file);
@@ -17,14 +17,14 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
 
     int pc  = 0;
     int run = 1;
-    char cmd[10] = ""; 
+    char cmd[size_cmd] = ""; 
     do 
     {
       fscanf(processor->input_file, "%s", cmd);
       if (is_label(cmd))
       {
         int free_lab = free_label(table_labels);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < size_cmd; i++)
         {
           table_labels[free_lab].label[i] = cmd[i];
         }
@@ -44,8 +44,8 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
 
       if (strcmp(cmd, "pushr") == 0)
       {
-        char arg[5] = {};
-        fscanf(processor->input_file, "%s", &arg);
+        char arg[size_cmd] = "";
+        fscanf(processor->input_file, "%s", &arg[0]);
         instructions[pc++] = CMD_PUSHR; 
           
         if (strcmp(arg, "AX") == 0)
@@ -138,8 +138,8 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
       {
         instructions[pc++] = CMD_POP;
 
-        char arg[5] = {};
-        fscanf(processor->input_file, "%s", &arg);
+        char arg[size_cmd] = "";
+        fscanf(processor->input_file, "%s", &arg[0]);
           
         if (strcmp(arg, "AX") == 0)
         {
@@ -233,15 +233,26 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
 
       if (strcmp(cmd, "JBE") == 0)
       { 
-        char arg[10] = {};
+        char arg[size_cmd] = {};
         fscanf(processor->input_file, "%s", arg);
         int found_label = find_label(table_labels, arg);
         if (found_label >= 0)
         {
-          instructions[pc] = CMD_JBE;   pc++;
+          instructions[pc] = CMD_JBE; pc++;
           instructions[pc] = table_labels[found_label].pc; pc++;
         }
+
+        else
+        {
+          printf(RED("SNTXERROR no match for label:\n"));
+          fputs(arg, stdout); 
+          printf("\n");
+          instructions[0] = CMD_HAULT; run = 0;
+          // instructions[pc++] = CMD_HAULT;
+          // instructions[pc++] = CMD_HAULT;
+        }
         continue;
+        
       }
 
       if (strcmp(cmd, "jbe") == 0)
@@ -285,7 +296,7 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
     
     }while (strcmp(cmd, "hlt") != 0 && (run == 1));
 
-    processor->instructions.script = instructions;
+    //processor->instructions.script = instructions;
     processor->instructions.size   = pc;
     labels_dtor(table_labels);
     // printf("=========================================\n");
@@ -303,7 +314,9 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
     fprintf(processor->output_file, "MOV\nversion: 1\n");
     struct stat file_data = {};
     stat(processor->name_file, &file_data);
-    fprintf(processor->output_file, "Size of input file: %d\n\n", file_data.st_size);
+    fprintf(processor->output_file, "Size of input file: %ld\n\n", file_data.st_size);
+    
+    fwrite(instructions, sizeof (instructions[0]), (size_t)pc, processor->output_bin);
 
     for (int i = 0; i < pc; i++)
     {
@@ -364,6 +377,6 @@ int assembler(struct SPU* processor)  //, const char* name) // для считы
             break;
         }
     }
-
+    free(instructions); instructions = NULL; 
     return 0; 
 }

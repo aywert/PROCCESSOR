@@ -11,5 +11,5 @@ add
 pop AX
 pushr AX
 push 10
-JBE xui
+JBE xyi
 hlt

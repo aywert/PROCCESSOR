@@ -26,7 +26,7 @@ int labels_dtor(label* table_labels)
 
 int is_label(char* cmd)
 {
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < size_cmd; i++)
     {
         if (cmd[i] == ':')
             return 1;
@@ -36,7 +36,7 @@ int is_label(char* cmd)
 
 int free_label(label* table_labels)
 {
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < size_label; i++)
     {
         if (table_labels[i].pc == -1)
             return i;
@@ -49,7 +49,7 @@ int free_label(label* table_labels)
 int find_label(label* table_labels, char* label)
 {
     int flag = 1;
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < size_label; i++)
     {
         int j = 0;
         while ((table_labels[i].label[j] != ':') && (j < 10))

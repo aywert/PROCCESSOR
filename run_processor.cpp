@@ -2,12 +2,22 @@
 //#define PROCESSOR_DEBUG
 int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *argv[])
 {
-  processor->name_file   = argv[argc-2];
-  processor->input_file  = fopen(argv[argc-2], "r");
-  processor->output_file = fopen(argv[argc-1], "w");
-
+  processor->name_file   = argv[argc-3];
+  processor->input_file  = fopen(argv[argc-3], "r");
+  processor->output_file = fopen(argv[argc-2], "w");
+  processor->output_bin  = fopen(argv[argc-1], "wb");
+  
   assembler(processor);
+  fclose(processor->output_bin);
 
+  processor->instructions.script = (int*)calloc( sizeof(int), processor->instructions.size);
+  assert(processor->instructions.script);
+
+  processor->output_bin  = fopen(argv[argc-1], "rb");
+  assert(processor->output_bin);
+
+  fread(processor->instructions.script, sizeof(processor->instructions.script[0]), processor->instructions.size, processor->output_bin);
+  
   MY_STACK_CTOR(stk, 10);
   
   double* registers = (double*)calloc(n_registers, sizeof(double));
@@ -15,6 +25,14 @@ int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *
 
   processor->stk = stk;
   processor->registers = registers;
+  // printf("processor->name_file = %p\n", processor->name_file);
+  // printf("processor->output_file = %p\n", processor->output_file);
+  // printf("processor->input_file = %p\n", processor->input_file);
+  // printf("processor->instructions.script = %p\n", processor->instructions.script);
+  // printf("processor->ip = %d\n", processor->ip);
+  // printf("processor->stk = %p\n", processor->stk);
+  // printf("processor->registers = %p\n", processor->registers);
+
   return 0;
 }
 
@@ -24,9 +42,10 @@ int run_processor(struct SPU* processor)
   while(run){
   ///////////////////////////////////////////////////////////////////////////////////////
     #ifdef PROCESSOR_DEBUG
+    printf("processor->instructions.size = %d\n", processor->instructions.size);
     for (int i = 0; i < processor->instructions.size; i++)
     {
-      printf(BLUE("%4X"), i);
+      printf(BLUE("%4i"), i);
     }
     printf("\n");
 
@@ -205,7 +224,8 @@ int run_processor(struct SPU* processor)
         break;
     
       default:
-        printf(RED("SNTXERR_PROCESSOR: %d"), processor->instructions.script[processor->ip]); 
+        printf(RED("SNTXERR_PROCESSOR: %d %d\n"), processor->instructions.script[processor->ip], processor->ip); 
+        printf("hlt!\n");
         run = STOP;
         break;
       }
@@ -218,6 +238,9 @@ int run_processor(struct SPU* processor)
 
 int processor_dtor(struct SPU* processor)
 {
+  fclose(processor->input_file);
+  fclose(processor->output_file);
+  fclose(processor->output_bin);
   MY_STACK_DTOR(processor->stk);
   free(processor->registers); processor->registers = NULL;
   free(processor->instructions.script); processor->instructions.script = NULL;
