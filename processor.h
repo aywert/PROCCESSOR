@@ -1,13 +1,21 @@
+#ifndef STACK_FUNC
+#define STACK_FUNC
+    #include"STACK\stack_functions.h"
+#endif
+
 #ifndef PROCCESSOR
 #define PROCCESSOR
 
 const int n_registers = 8;
 const int last_register = -1;
-
+const int size_RAW = 1024;
 const double pi =  3.1415926535;
 
-#include"STACK\stack_functions.h"
-#include"assembler.h"
+enum push_reg
+{
+    push_f_con  = 1,
+    push_f_reg  = 2,
+};
 
 enum cycle_status
 {
@@ -21,12 +29,6 @@ struct massive
     int size;
 };
 
-struct label
-{
-    int pc;
-    char label[];
-};
-
 struct SPU
 {
     char* name_file;
@@ -36,14 +38,9 @@ struct SPU
     struct massive instructions;
     int ip;
     struct my_stack* stk;
+    struct massive RAW;
     double* registers;
 };
-
-int free_label(label* table_labels);
-int is_label(char* cmd);
-int find_label(label* table_labels, char* label);
-label* labels_init(void);
-int labels_dtor(label* processor_labels);
 
 int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *argv[]);
 int run_processor(struct SPU* processor);

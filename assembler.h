@@ -1,18 +1,23 @@
+// #ifndef ASSERT_PROC
+// #define ASSERT_PROC
+//     #include"assert.h"
+// #endif
+
 #ifndef ASSEMBLER
 #define ASSEMBLER
 
 #include<sys/stat.h>
 #include"string.h"
-#include"..\STACK\stack_functions.h"
 
 enum op_comands
 {
-    CMD_PUSH   = 1,
-    CMD_INPUT  = 2,
-    CMD_OUTPUT = 3,
     CMD_HAULT  = -1,
-    CMD_POP    = 4,
-    CMD_PUSHR  = 5,
+    CMD_PUSH   =  1,
+    CMD_INPUT  =  2,
+    CMD_OUTPUT =  3,
+    CMD_POP    =  4,
+    CMD_PUSHR  =  5,
+    CMD_DRAW   =  6,
 };
 
 enum math_comands
@@ -37,10 +42,8 @@ enum go_to
     CMD_JMP = 7<<8,
 };
 
-
-
-const int instruct_size = 30;
-const int size_cmd = 10;
+const int size_cmd = 30;
+const int instruct_size = 50;
 const int size_label = 30;
 int assembler(struct SPU* processor);
 

@@ -1,8 +1,16 @@
-#include"processor.h"
+#ifndef STACK_FUNC
+#define STACK_FUNC
+    #include"STACK\stack_functions.h"
+#endif
 
-label* labels_init(void)
+#include"processor.h"
+#include"processor_labels.h"
+#include"assert.h"
+
+label* labels_init(int size)
 {
-    label* table_labels = (label*)calloc(sizeof(label), instruct_size);
+    label* table_labels = (label*)calloc(sizeof(label), size);
+    assert(table_labels);
 
     if (table_labels == NULL)
     {
@@ -10,7 +18,7 @@ label* labels_init(void)
         return 0;
     }
 
-    for (int i = 0; i < instruct_size; i++)
+    for (int i = 0; i < size; i++)
     {
         table_labels[i].pc = -1;
     }
@@ -20,45 +28,68 @@ label* labels_init(void)
 
 int labels_dtor(label* table_labels)
 {
+    assert(table_labels);
     free(table_labels); table_labels = NULL;
     return 0;
 }
 
-int is_label(char* cmd)
+int is_label(char* cmd, int label_size)
 {
-    for (int i = 0; i < size_cmd; i++)
+    assert(cmd);
+    //printf("printing grom label is\n");
+    for (int i = 0; i < label_size; i++)
     {
         if (cmd[i] == ':')
+        {
             return 1;
+        }
     }
+    
     return 0;
 }
 
-int free_label(label* table_labels)
+int free_label(label* table_labels, int label_size)
 {
-    for (int i = 0; i < size_label; i++)
+    assert(table_labels);
+
+    // for (int i = 0; i < label_size; i++)
+    // {
+    //     //printf("1");
+    //     printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
+    // }
+    // printf("=========================================\n");
+
+    for (int i = 0; i < label_size; i++)
     {
+        //printf("table_labels[i] = %d", table_labels[i].pc);
         if (table_labels[i].pc == -1)
             return i;
-        else 
-            printf(RED("Not enough space in labels"));
     }
+    //printf("=========================================\n");
+
+    printf(RED("Not enough space in labels"));
     return 0;
 }
 
-int find_label(label* table_labels, char* label)
+int find_label(label* table_labels, char* label, int label_size)
 {
-    int flag = 1;
-    for (int i = 0; i < size_label; i++)
+    assert(table_labels);
+    assert(label);
+
+    for (int i = 0; i < label_size; i++)
     {
         int j = 0;
-        while ((table_labels[i].label[j] != ':') && (j < 10))
+        int flag = 1;
+        while (j < label_size)
         {
-            if (table_labels[i].label[j] != label[j])
+            //printf("%c ", table_labels[i].label[j]);
+            if (table_labels[i].label[j] != label[j] /*|| (label[j+1] == '0')*/)
+            {
                 flag = -1;
+            }
             j++;
-        }
-        if (flag >= 0)
+        } 
+        if (flag == 1)
             return i;
     }
     printf(RED("Labels is incorrect please mind its value\nYour label have been ignored\n"));
