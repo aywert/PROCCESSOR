@@ -1,16 +1,26 @@
+in
+
+call func
+
 push 1 1
-foo:
-pop AX
-foolk_right:
-push 2 AX
-push 2 AX
-mul
+push 1 1
+sub
 out
-push 2 AX
-push 1 1
-add
-pop AX
-push 2 AX
-push 1 10
-JBE foolk_right
 hlt
+
+func:
+    pop AX
+    NEXT:
+    push 2 AX
+    push 2 AX
+    mul
+    out
+    push 2 AX
+    push 1 1
+    add
+    pop AX
+    push 2 AX
+    push 1 10
+    JBE NEXT
+
+    ret

@@ -17,6 +17,7 @@ int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *
   processor->output_bin  = fopen(argv[argc-1], "wb"); assert(processor->output_bin);
   
   assembler(processor);
+ 
   fclose(processor->output_bin);
 
   processor->instructions.size = instruct_size;
@@ -112,6 +113,16 @@ int run_processor(struct SPU* processor)
       case CMD_PUSH:
         //MY_STACK_PUSH(processor->stk, processor->instructions.script[++processor->ip]);
         MY_STACK_PUSH(processor->stk, get_arg(processor));
+        break;
+
+      case CMD_CALL:
+        processor->registers[6] = processor->instructions.script[++processor->ip];
+        tempor_ip = processor->ip + 1;
+        processor->ip = processor->instructions.script[tempor_ip] - 1;
+        break;
+
+      case CMD_RET:
+        processor->ip = (int)processor->registers[6];
         break;
 
       case CMD_ADD:
@@ -267,7 +278,6 @@ int run_processor(struct SPU* processor)
     
       default:
         printf(RED("\nSNTXERR_PROCESSOR: %d %d\n"), processor->instructions.script[processor->ip], processor->ip); 
-        printf("hlt!\n");
         run = STOP;
         break;
       }

@@ -18,6 +18,8 @@ enum op_comands
     CMD_POP    =  4,
     CMD_PUSHR  =  5,
     CMD_DRAW   =  6,
+    CMD_CALL   =  7,
+    CMD_RET    =  8,
 };
 
 enum math_comands

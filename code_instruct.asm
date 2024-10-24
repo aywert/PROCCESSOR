@@ -1,8 +1,14 @@
 MOV
 version: 1
-Size of input file: 146
+Size of input file: 237
 
+2
+7 3 13
 1 1 1
+1 1 1
+32
+3
+-1
 4 0
 1 2 0
 1 2 0
@@ -14,5 +20,6 @@ Size of input file: 146
 4 0
 1 2 0
 1 1 10
-1024 5
--1
+1024 15
+8
+8

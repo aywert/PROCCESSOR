@@ -90,8 +90,12 @@ int find_label(label* table_labels, char* label, int label_size)
             j++;
         } 
         if (flag == 1)
+        {
+            for (int a = 0; a < label_size; a++)
+                table_labels[i].label[a] = '\0';
             return i;
+        }
     }
-    printf(RED("Labels is incorrect please mind its value\nYour label have been ignored\n"));
+    //printf(RED("Labels is incorrect please mind its value\nYour label have been ignored\n"));
     return -1;
 }

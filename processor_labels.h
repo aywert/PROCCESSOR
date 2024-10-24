@@ -9,7 +9,7 @@
 struct label
 {
     int pc;
-    char label[30];
+    char label[50];
 };
 
 label* labels_init(int size);
