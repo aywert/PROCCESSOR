@@ -38,11 +38,12 @@ struct SPU
     struct massive instructions;
     int ip;
     struct my_stack* stk;
+    struct my_stack* adr_stk;
     struct massive RAW;
     double* registers;
 };
 
-int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *argv[]);
+int processor_init(struct SPU* processor, struct my_stack* stk, struct my_stack* adr_stk, int argc, char *argv[]);
 int run_processor(struct SPU* processor);
 int processor_dtor(struct SPU* processor);
 

@@ -45,7 +45,7 @@ enum go_to
 };
 
 const int size_cmd = 30;
-const int instruct_size = 50;
+const int instruct_size = 100;
 const int size_label = 30;
 int assembler(struct SPU* processor);
 

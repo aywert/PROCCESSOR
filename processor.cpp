@@ -4,7 +4,7 @@
 
 static double get_arg(SPU* processor);
 
-int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *argv[])
+int processor_init(struct SPU* processor, struct my_stack* stk, struct my_stack* adr_stk, int argc, char *argv[])
 {
   assert(processor);
   assert(stk);
@@ -48,12 +48,14 @@ int processor_init(struct SPU* processor, struct my_stack* stk, int argc, char *
   // for (int i = 0; i < processor->instructions.size; i++)
   //   printf("%d\n", processor->instructions.script[i]);
   MY_STACK_CTOR(stk, 10);
+  MY_STACK_CTOR(adr_stk, 10);
   
   double* registers = (double*)calloc(n_registers, sizeof(double));
   assert(registers);
   registers[n_registers - 1] = last_register;
 
   processor->stk = stk;
+  processor->adr_stk = adr_stk;
   processor->registers = registers;
   //printf("====================================================");
   // printf("processor->name_file = %p\n", processor->name_file);
@@ -100,6 +102,7 @@ int run_processor(struct SPU* processor)
     stack_elem_t x_1 = 0;
     stack_elem_t x_2 = 0;
     stack_elem_t output = 0;
+    stack_elem_t tempr = 0;
     int tempor_ip = 0;
 
     // for (int i = 0; i < n_registers; i++)
@@ -107,7 +110,8 @@ int run_processor(struct SPU* processor)
     //   printf("registers[%d] =  %d\n", i, processor->registers[i]);
     // }
     // printf("==========================================\n");
-    
+    printf("processor->ip = %d\n", processor->ip);
+    printf("processor->instructions =  %d\n", processor->instructions.script[processor->ip]);
     switch(processor->instructions.script[processor->ip])
     {
       case CMD_PUSH:
@@ -116,13 +120,17 @@ int run_processor(struct SPU* processor)
         break;
 
       case CMD_CALL:
-        processor->registers[6] = processor->instructions.script[++processor->ip];
-        tempor_ip = processor->ip + 1;
-        processor->ip = processor->instructions.script[tempor_ip] - 1;
+        MY_STACK_PUSH(processor->adr_stk, processor->instructions.script[++processor->ip]-1);
+        //processor->registers[6] = processor->instructions.script[++processor->ip];
+        tempor_ip = processor->ip;
+        processor->ip = processor->instructions.script[tempor_ip+1] - 1;
         break;
 
       case CMD_RET:
-        processor->ip = (int)processor->registers[6];
+        MY_STACK_POP(processor->adr_stk, &tempr);
+        processor->ip = (int)tempr;
+        // printf(" processor->ip = %d\n", processor->ip);
+        // printf("tempor_ip = %lg\n", tempor_ip);
         break;
 
       case CMD_ADD:

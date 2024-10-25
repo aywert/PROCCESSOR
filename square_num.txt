@@ -1,4 +1,5 @@
 in
+in
 
 call func
 
@@ -9,6 +10,7 @@ out
 hlt
 
 func:
+    pop BX
     pop AX
     NEXT:
     push 2 AX
@@ -20,7 +22,6 @@ func:
     add
     pop AX
     push 2 AX
-    push 1 10
+    push 2 BX
     JBE NEXT
-
-    ret
+ret

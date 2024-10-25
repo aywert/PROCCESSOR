@@ -24,41 +24,70 @@ int assembler(struct SPU* processor)
 
   int eof = 0;
   char cmd[size_cmd] = {}; 
-  for (int q = 0; q < 2; q++){ 
+  for (int n_pass = 1; n_pass <= 3; n_pass++){ 
     int pc  = 0;
     int run = 1;
     do 
     {
       eof = fscanf(processor->input_file, "%s", cmd);
+      if (eof == EOF)
+        break;
+      //printf("cmd = %s\n", cmd);
       if (is_label(cmd, size_cmd) == 1)
       {
-        printf("i am label\n");
+        //printf("i am label\n");
         int free_lab = free_label(table_labels, size_label);
         for (int i = 0; i < size_cmd; i++)
         {
           table_labels[free_lab].label[i] = cmd[i]; cmd[i] = 0;
-
+          printf("%c", table_labels[free_lab].label[i]);
           if (table_labels[free_lab].label[i] == ':')\
             table_labels[free_lab].label[i] = '\0';
         }
+        printf("\n");
         
         table_labels[free_lab].pc = pc;
+        printf("pc = %d\n", pc);
+
+    //      for(int i = 0; i < 3; i++)
+    // {
+    //   for (int j = 0; j < 10; j++)
+    //   {
+    //     printf("table_labels[%d].label[%d] = %c\n", i, j, table_labels[i].label[j]);
+    //   }
+    //   printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
+    //   printf("======================================\n");
+    // }
+    
         continue;
-        
       }
 
       if (strcmp(cmd, "call") == 0)
       {
-        printf("i was here\n");
+        instructions[pc] = CMD_CALL; pc++; 
+        //printf("i was here\n");
         char arg[size_label] = "";
         fscanf(processor->input_file, "%s", &arg[0]);
         int found_label = find_label(table_labels, arg, size_label);
         printf("found_label = %d\n", found_label);
+
+    //      for(int i = 0; i < 3; i++)
+    // {
+    //   for (int j = 0; j < 10; j++)
+    //   {
+    //     printf("table_labels[%d].label[%d] = %c\n", i, j, table_labels[i].label[j]);
+    //   }
+    //   printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
+    //   printf("======================================\n");
+    // }
         if (found_label >= 0)
         {
-          instructions[pc] = CMD_CALL; pc++; 
-          instructions[pc] = pc + 1; pc++;
-          instructions[pc] = table_labels[found_label].pc + 3; pc++;
+          instructions[pc] = pc + 2; pc++; // 
+          instructions[pc] = table_labels[found_label].pc; pc++;
+        }
+        else
+        {
+          pc += 2;
         }
         continue;
       }
@@ -71,7 +100,7 @@ int assembler(struct SPU* processor)
 
       if (strcmp(cmd, "push") == 0)
       {
-        printf("was here push\n");
+        //printf("was here push\n");
         int arg_1 = 0;
         fscanf(processor->input_file, "%d", &arg_1);
         instructions[pc++] = CMD_PUSH;
@@ -293,10 +322,13 @@ int assembler(struct SPU* processor)
 
         else
         {
-          printf(RED("\nSNTXERROR no match for label:\n"));
-          fputs(arg, stdout); 
-          printf("\n");
-          instructions[0] = CMD_HAULT; run = 0;
+          if (n_pass >= 2)
+          {
+            printf(RED("\nSNTXERROR no match for label: "));
+            fputs(arg, stdout); 
+            printf("\n");
+            instructions[0] = CMD_HAULT; run = 0;
+          }
         }
         continue;
         
@@ -309,6 +341,32 @@ int assembler(struct SPU* processor)
         instructions[pc] = CMD_JBE; pc++;
         instructions[pc] = arg;     pc++;
         continue;
+      }
+
+      if (strcmp(cmd, "JE") == 0)
+      { 
+        char arg[size_cmd] = {};
+        fscanf(processor->input_file, "%s", arg);
+        int found_label = find_label(table_labels, arg, size_cmd);
+        if (found_label >= 0)
+        {
+          instructions[pc] = CMD_JBE; pc++;
+          instructions[pc] = table_labels[found_label].pc; pc++;
+          table_labels[found_label].pc = -1;
+        }
+
+        else
+        {
+          if (n_pass >= 2)
+          {
+            printf(RED("\nSNTXERROR no match for label: "));
+            fputs(arg, stdout); 
+            printf("\n");
+            instructions[0] = CMD_HAULT; run = 0;
+          }
+        }
+        continue;
+        
       }
 
       if (strcmp(cmd, "je") == 0)
@@ -339,23 +397,14 @@ int assembler(struct SPU* processor)
       }
 
       ////////////////////////
-      printf(RED("SNTXERR_ASSEMBLER: %s\n"), cmd);
-      run = 0;
-      // for(int i = 0; i < 10; i++)
-    // {
-    //   for (int j = 0; j < instruct_size; j++)
-    //   {
-    //     printf("table_labels[%d].label[%d] = %c\n", i, j, table_labels[i].label[j]);
-    //   }
-    //   printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
-    //   printf("======================================\n");
-    //}
+      //printf(RED("SNTXERR_ASSEMBLER: %s\n"), cmd);
+      //run = 0;
 
       } while (eof != EOF && run == 1);
 
-    for(int i = 0; i < pc; i++)
-      printf("instructions[%d] = %d\n", i, instructions[i]);
-    printf("===================================\n");
+    // for(int i = 0; i < pc; i++)
+    //   printf("instructions[%d] = %d\n", i, instructions[i]);
+    // printf("===================================\n");
     //processor->instructions.script = instructions;
     processor->instructions.size = pc;
     rewind(processor->input_file);
@@ -370,7 +419,7 @@ int assembler(struct SPU* processor)
     // }
   }
 
-  labels_dtor(table_labels);
+  //labels_dtor(table_labels);
   
   // printf("=========================================\n");
   // printf("processor->name_file = %p\n", processor->name_file);

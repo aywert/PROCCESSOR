@@ -83,7 +83,7 @@ int find_label(label* table_labels, char* label, int label_size)
         while (j < label_size)
         {
             //printf("%c ", table_labels[i].label[j]);
-            if (table_labels[i].label[j] != label[j] /*|| (label[j+1] == '0')*/)
+            if (table_labels[i].label[j] != label[j])
             {
                 flag = -1;
             }
@@ -91,8 +91,8 @@ int find_label(label* table_labels, char* label, int label_size)
         } 
         if (flag == 1)
         {
-            for (int a = 0; a < label_size; a++)
-                table_labels[i].label[a] = '\0';
+            // for (int a = 0; a < label_size; a++)
+            //     table_labels[i].label[a] = '\0';
             return i;
         }
     }

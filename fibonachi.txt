@@ -1,0 +1,54 @@
+in
+in
+in
+
+call func
+out
+
+push 1 1
+push 1 1
+
+mul
+out
+hlt
+
+func:
+    pop CX
+    push 2 CX
+    push 1 0
+    JE ZERO
+
+    push 2 CX
+    push 1 1
+    JE ONE
+
+    push 2 CX
+    push 1 2
+    sub
+    push 2 DX
+    JBE NEXT
+
+    pop BX
+    pop AX
+    push 2 BX
+    push 2 AX
+    push 2 BX
+    add
+    push 2 DX
+    push 1 1
+    add
+    pop DX
+    push 2 CX
+    
+    call func
+
+    NEXT:
+    ret
+
+    ZERO:
+    push 1 0
+    ret
+
+    ONE:
+    push 1 0
+    ret

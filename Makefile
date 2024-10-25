@@ -9,7 +9,7 @@ OBJFILES := main.o STACK\stack_functions.o STACK\ASSERT.o assembler.o processor.
 all: $(NAMEEXE)
 
 run: $(NAMEEXE)
-	.\$(NAMEEXE) code_instruct_draw.txt code_instruct.asm code_instruct.bin
+	.\$(NAMEEXE) square_num.txt code_instruct.asm code_instruct.bin
 
 $(NAMEEXE) : $(OBJFILES)
 	@g++ $(OBJFILES) -o $@ $(LFLAGS)
