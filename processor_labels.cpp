@@ -83,6 +83,8 @@ int find_label(label* table_labels, char* label, int label_size)
         while (j < label_size)
         {
             //printf("%c ", table_labels[i].label[j]);
+            if (label[j] == ':')
+                break;
             if (table_labels[i].label[j] != label[j])
             {
                 flag = -1;

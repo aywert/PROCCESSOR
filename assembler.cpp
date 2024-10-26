@@ -24,7 +24,7 @@ int assembler(struct SPU* processor)
 
   int eof = 0;
   char cmd[size_cmd] = {}; 
-  for (int n_pass = 1; n_pass <= 3; n_pass++){ 
+  for (int n_pass = 1; n_pass <= 2; n_pass++){ 
     int pc  = 0;
     int run = 1;
     do 
@@ -36,20 +36,30 @@ int assembler(struct SPU* processor)
       if (is_label(cmd, size_cmd) == 1)
       {
         //printf("i am label\n");
-        int free_lab = free_label(table_labels, size_label);
-        for (int i = 0; i < size_cmd; i++)
+        int found_label = find_label(table_labels, cmd, size_label);
+        if (find_label(table_labels, cmd, size_label) >= 0)
         {
-          table_labels[free_lab].label[i] = cmd[i]; cmd[i] = 0;
-          printf("%c", table_labels[free_lab].label[i]);
-          if (table_labels[free_lab].label[i] == ':')\
-            table_labels[free_lab].label[i] = '\0';
+          table_labels[found_label].pc = pc;
+          for (int i = 0; i < size_cmd; i++)
+            cmd[i] = 0;
         }
-        printf("\n");
+        else
+        {
+          int free_lab = free_label(table_labels, size_label);
+          for (int i = 0; i < size_cmd; i++)
+          {
+            table_labels[free_lab].label[i] = cmd[i]; cmd[i] = 0;
+            //printf("%c", table_labels[free_lab].label[i]);
+            if (table_labels[free_lab].label[i] == ':')\
+              table_labels[free_lab].label[i] = '\0';
+          }
+            //printf("\n");
         
-        table_labels[free_lab].pc = pc;
-        printf("pc = %d\n", pc);
+          table_labels[free_lab].pc = pc;\
+        }
+        //printf("pc = %d\n", pc);
 
-    //      for(int i = 0; i < 3; i++)
+    //      for(int i = 0; i < 5; i++)
     // {
     //   for (int j = 0; j < 10; j++)
     //   {
@@ -65,11 +75,10 @@ int assembler(struct SPU* processor)
       if (strcmp(cmd, "call") == 0)
       {
         instructions[pc] = CMD_CALL; pc++; 
-        //printf("i was here\n");
         char arg[size_label] = "";
         fscanf(processor->input_file, "%s", &arg[0]);
         int found_label = find_label(table_labels, arg, size_label);
-        printf("found_label = %d\n", found_label);
+        //printf("found_label = %d\n", found_label);
 
     //      for(int i = 0; i < 3; i++)
     // {
@@ -165,7 +174,6 @@ int assembler(struct SPU* processor)
       if (strcmp(cmd, "add") == 0)
       {
         instructions[pc] = CMD_ADD; pc++;
-        printf("add\n"); 
         continue;
       }
 
@@ -317,7 +325,6 @@ int assembler(struct SPU* processor)
         {
           instructions[pc] = CMD_JBE; pc++;
           instructions[pc] = table_labels[found_label].pc; pc++;
-          table_labels[found_label].pc = -1;
         }
 
         else
@@ -329,6 +336,7 @@ int assembler(struct SPU* processor)
             printf("\n");
             instructions[0] = CMD_HAULT; run = 0;
           }
+          pc += 2;
         }
         continue;
         
@@ -352,7 +360,7 @@ int assembler(struct SPU* processor)
         {
           instructions[pc] = CMD_JBE; pc++;
           instructions[pc] = table_labels[found_label].pc; pc++;
-          table_labels[found_label].pc = -1;
+          //table_labels[found_label].pc = -1;
         }
 
         else
@@ -364,6 +372,7 @@ int assembler(struct SPU* processor)
             printf("\n");
             instructions[0] = CMD_HAULT; run = 0;
           }
+          pc += 2; 
         }
         continue;
         
@@ -406,6 +415,7 @@ int assembler(struct SPU* processor)
     //   printf("instructions[%d] = %d\n", i, instructions[i]);
     // printf("===================================\n");
     //processor->instructions.script = instructions;
+    //printf(CYAN("ANOTHER PASS\n"));
     processor->instructions.size = pc;
     rewind(processor->input_file);
     // for(int i = 0; i < 10; i++)

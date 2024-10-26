@@ -110,8 +110,8 @@ int run_processor(struct SPU* processor)
     //   printf("registers[%d] =  %d\n", i, processor->registers[i]);
     // }
     // printf("==========================================\n");
-    printf("processor->ip = %d\n", processor->ip);
-    printf("processor->instructions =  %d\n", processor->instructions.script[processor->ip]);
+    // printf("processor->ip = %d\n", processor->ip);
+    // printf("processor->instructions =  %d\n", processor->instructions.script[processor->ip]);
     switch(processor->instructions.script[processor->ip])
     {
       case CMD_PUSH:
