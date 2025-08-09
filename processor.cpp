@@ -1,6 +1,5 @@
 #include"processor.h"
 #include"assembler.h"
-//#define PROCESSOR_DEBUG
 
 static double get_arg(SPU* processor);
 
@@ -45,8 +44,7 @@ int processor_init(struct SPU* processor, struct my_stack* stk, struct my_stack*
 
   int n_elem = fread(processor->instructions.script, sizeof(processor->instructions.script[0]), processor->instructions.size, processor->output_bin);
   assert(n_elem);
-  // for (int i = 0; i < processor->instructions.size; i++)
-  //   printf("%d\n", processor->instructions.script[i]);
+ 
   MY_STACK_CTOR(stk, 10);
   MY_STACK_CTOR(adr_stk, 10);
   
@@ -57,15 +55,7 @@ int processor_init(struct SPU* processor, struct my_stack* stk, struct my_stack*
   processor->stk = stk;
   processor->adr_stk = adr_stk;
   processor->registers = registers;
-  //printf("====================================================");
-  // printf("processor->name_file = %p\n", processor->name_file);
-  // printf("processor->output_file = %p\n", processor->output_file);
-  // printf("processor->input_file = %p\n", processor->input_file);
-  // printf("processor->instructions.script = %p\n", processor->instructions.script);
-  // printf("processor->ip = %d\n", processor->ip);
-  // printf("processor->stk = %p\n", processor->stk);
-  // printf("processor->registers = %p\n", processor->registers);
-  //printf("====================================================");
+
   return 0;
 }
 
@@ -105,23 +95,14 @@ int run_processor(struct SPU* processor)
     stack_elem_t tempr = 0;
     int tempor_ip = 0;
 
-    // for (int i = 0; i < n_registers; i++)
-    // {
-    //   printf("registers[%d] =  %d\n", i, processor->registers[i]);
-    // }
-    // printf("==========================================\n");
-    // printf("processor->ip = %d\n", processor->ip);
-    // printf("processor->instructions =  %d\n", processor->instructions.script[processor->ip]);
     switch(processor->instructions.script[processor->ip])
     {
       case CMD_PUSH:
-        //MY_STACK_PUSH(processor->stk, processor->instructions.script[++processor->ip]);
         MY_STACK_PUSH(processor->stk, get_arg(processor));
         break;
 
       case CMD_CALL:
         MY_STACK_PUSH(processor->adr_stk, processor->instructions.script[++processor->ip]-1);
-        //processor->registers[6] = processor->instructions.script[++processor->ip];
         tempor_ip = processor->ip;
         processor->ip = processor->instructions.script[tempor_ip+1] - 1;
         break;
@@ -129,8 +110,6 @@ int run_processor(struct SPU* processor)
       case CMD_RET:
         MY_STACK_POP(processor->adr_stk, &tempr);
         processor->ip = (int)tempr;
-        // printf(" processor->ip = %d\n", processor->ip);
-        // printf("tempor_ip = %lg\n", tempor_ip);
         break;
 
       case CMD_ADD:
@@ -295,10 +274,6 @@ int run_processor(struct SPU* processor)
 
   return 0;
 }
-
-// 1 - push directly
-// 2 - push from registers
-// 3 - push from RAW
 
 static double get_arg(SPU* processor)
 {

@@ -6,17 +6,9 @@
 #include"processor.h"
 #include"assembler.h"
 #include"processor_labels.h"
+
 int assembler(struct SPU* processor) 
 {
-  // printf("=========================================\n");
-  // printf("processor->name_file = %p\n", processor->name_file);
-  // printf("processor->output_file = %p\n", processor->output_file);
-  // printf("processor->input_file = %p\n", processor->input_file);
-  // printf("processor->instructions = %p\n", processor->instructions);
-  // printf("processor->ip = %d\n", processor->ip);
-  // printf("processor->stk = %p\n", processor->stk);
-  // printf("processor->registers = %p\n", processor->registers);
-  // printf("=========================================\n");
   assert(processor);
   int* instructions = (int*)calloc(sizeof(int), instruct_size); 
   assert(instructions);
@@ -32,10 +24,8 @@ int assembler(struct SPU* processor)
       eof = fscanf(processor->input_file, "%s", cmd);
       if (eof == EOF)
         break;
-      //printf("cmd = %s\n", cmd);
       if (is_label(cmd, size_cmd) == 1)
       {
-        //printf("i am label\n");
         int found_label = find_label(table_labels, cmd, size_label);
         if (find_label(table_labels, cmd, size_label) >= 0)
         {
@@ -49,25 +39,12 @@ int assembler(struct SPU* processor)
           for (int i = 0; i < size_cmd; i++)
           {
             table_labels[free_lab].label[i] = cmd[i]; cmd[i] = 0;
-            //printf("%c", table_labels[free_lab].label[i]);
             if (table_labels[free_lab].label[i] == ':')\
               table_labels[free_lab].label[i] = '\0';
           }
-            //printf("\n");
         
           table_labels[free_lab].pc = pc;\
         }
-        //printf("pc = %d\n", pc);
-
-    //      for(int i = 0; i < 5; i++)
-    // {
-    //   for (int j = 0; j < 10; j++)
-    //   {
-    //     printf("table_labels[%d].label[%d] = %c\n", i, j, table_labels[i].label[j]);
-    //   }
-    //   printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
-    //   printf("======================================\n");
-    // }
     
         continue;
       }
@@ -78,17 +55,7 @@ int assembler(struct SPU* processor)
         char arg[size_label] = "";
         fscanf(processor->input_file, "%s", &arg[0]);
         int found_label = find_label(table_labels, arg, size_label);
-        //printf("found_label = %d\n", found_label);
-
-    //      for(int i = 0; i < 3; i++)
-    // {
-    //   for (int j = 0; j < 10; j++)
-    //   {
-    //     printf("table_labels[%d].label[%d] = %c\n", i, j, table_labels[i].label[j]);
-    //   }
-    //   printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
-    //   printf("======================================\n");
-    // }
+        
         if (found_label >= 0)
         {
           instructions[pc] = pc + 2; pc++; // 
@@ -109,7 +76,6 @@ int assembler(struct SPU* processor)
 
       if (strcmp(cmd, "push") == 0)
       {
-        //printf("was here push\n");
         int arg_1 = 0;
         fscanf(processor->input_file, "%d", &arg_1);
         instructions[pc++] = CMD_PUSH;
@@ -262,6 +228,8 @@ int assembler(struct SPU* processor)
           continue;
         }
 
+        //добавить еррор
+
         continue;
       }
 
@@ -360,7 +328,6 @@ int assembler(struct SPU* processor)
         {
           instructions[pc] = CMD_JBE; pc++;
           instructions[pc] = table_labels[found_label].pc; pc++;
-          //table_labels[found_label].pc = -1;
         }
 
         else
@@ -405,31 +372,13 @@ int assembler(struct SPU* processor)
         continue;
       }
 
-      ////////////////////////
-      //printf(RED("SNTXERR_ASSEMBLER: %s\n"), cmd);
-      //run = 0;
-
       } while (eof != EOF && run == 1);
 
-    // for(int i = 0; i < pc; i++)
-    //   printf("instructions[%d] = %d\n", i, instructions[i]);
-    // printf("===================================\n");
-    //processor->instructions.script = instructions;
-    //printf(CYAN("ANOTHER PASS\n"));
     processor->instructions.size = pc;
     rewind(processor->input_file);
-    // for(int i = 0; i < 10; i++)
-    // {
-    //   for (int j = 0; j < 10; j++)
-    //   {
-    //     printf("table_labels[%d].label[%d] = %c\n", i, j, table_labels[i].label[j]);
-    //   }
-    //   printf("table_labels[%d].pc = %d\n", i, table_labels[i].pc);
-    //   printf("======================================\n");
-    // }
   }
 
-  //labels_dtor(table_labels);
+  labels_dtor(table_labels);
   
   // printf("=========================================\n");
   // printf("processor->name_file = %p\n", processor->name_file);

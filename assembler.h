@@ -1,8 +1,3 @@
-// #ifndef ASSERT_PROC
-// #define ASSERT_PROC
-//     #include"assert.h"
-// #endif
-
 #ifndef ASSEMBLER
 #define ASSEMBLER
 

@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
     processor_init(&processor, &stk, &adr_stk, argc, argv);
 
     run_processor(&processor);
-    //printf(YELLOW("processor.registers[6] = %lg\n"), processor.registers[6]);
 
     processor_dtor(&processor); 
     
